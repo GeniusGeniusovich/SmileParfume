@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile Parfume - Моя карта лояльности</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #e91e63;
+            --secondary-color: #9c27b0;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #2b2d42;
+            --text-light: #6c757d;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-section {
+            background: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            right: -20%;
+            width: 140px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .card-type {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .card-number {
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-barcode {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-barcode svg {
+            background: white;
+            padding: 6px;
+            border-radius: 6px;
+            height: 45px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-user {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .card-points {
+            text-align: right;
+        }
+
+        .points-value {
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .points-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--card-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d81b60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .card-action-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--card-color);
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .card-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-action-btn i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .instructions {
+            background: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+
+        .generated-card {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .generated-card.active {
+            display: block;
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            background: #d81b60;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-section">
+            <div class="card" id="loyalty-card">
+                <div class="card-header">
+                    <div class="card-logo">Smile Parfume</div>
+                    <div class="card-type">VIP Client</div>
+                </div>
+                <div class="card-number" id="card-number">0000 0000 0000</div>
+                <div class="card-barcode">
+                    <svg id="barcode"></svg>
+                </div>
+                <div class="card-footer">
+                    <div class="card-user" id="card-user">Ваше Имя</div>
+                    <div class="card-points">
+                        <div class="points-value" id="points-value">0</div>
+                        <div class="points-label" id="points-label">баллов</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-actions">
+                <button class="card-action-btn" id="save-card-btn">
+                    <i class="fas fa-save"></i>
+                    <span>Сохранить</span>
+                </button>
+                <button class="card-action-btn" id="share-card-btn">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Поделиться</span>
+                </button>
+                <button class="card-action-btn" id="print-card-btn">
+                    <i class="fas fa-print"></i>
+                    <span>Печать</span>
+                </button>
+            </div>
+            
+            <div class="generated-card" id="generated-card">
+                <h3>Карта сохранена!</h3>
+                <p>Ваша карта лояльности успешно создана и сохранена.</p>
+                <button class="download-btn" id="download-card-btn">
+                    <i class="fas fa-download"></i>
+                    Скачать карту
+                </button>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-id-card"></i>
+                Создание карты лояльности
+            </h2>
+            
+            <div class="form-group">
+                <label for="user-name">
+                    <i class="fas fa-user"></i>
+                    Ваше имя
+                </label>
+                <input type="text" id="user-name" placeholder="Введите ваше имя">
+            </div>
+            
+            <div class="form-group">
+                <label for="user-phone">
+                    <i class="fas fa-phone"></i>
+                    Номер телефона
+                </label>
+                <input type="tel" id="user-phone" placeholder="+7 (000) 000-00-00">
+            </div>
+            
+            <div class="form-group">
+                <label for="user-email">
+                    <i class="fas fa-envelope"></i>
+                    Email
+                </label>
+                <input type="email" id="user-email" placeholder="your@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-number-input">
+                    <i class="fas fa-credit-card"></i>
+                    Номер карты
+                </label>
+                <input type="text" id="card-number-input" placeholder="0000 0000 0000" maxlength="14">
+            </div>
+            
+            <div class="form-group">
+                <label for="user-birthdate">
+                    <i class="fas fa-birthday-cake"></i>
+                    Дата рождения
+                </label>
+                <input type="date" id="user-birthdate">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="generate-card-btn">
+                    <i class="fas fa-qrcode"></i>
+                    Создать карту
+                </button>
+                <button class="btn btn-secondary" id="reset-form-btn">
+                    <i class="fas fa-redo"></i>
+                    Сбросить
+                </button>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> Как использовать карту</h3>
+                <ul>
+                    <li>Предъявите карту при покупке в магазине</li>
+                    <li>Накапливайте баллы за каждую покупку</li>
+                    <li>Используйте баллы для получения скидок</li>
+                    <li>Участвуйте в специальных акциях для владельцев карт</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardNumber = document.getElementById('card-number');
+            const cardUser = document.getElementById('card-user');
+            const pointsValue = document.getElementById('points-value');
+            const barcodeSvg = document.getElementById('barcode');
+            
+            const userNameInput = document.getElementById('user-name');
+            const userPhoneInput = document.getElementById('user-phone');
+            const userEmailInput = document.getElementById('user-email');
+            const cardNumberInput = document.getElementById('card-number-input');
+            const userBirthdateInput = document.getElementById('user-birthdate');
+            
+            const generateCardBtn = document.getElementById('generate-card-btn');
+            const resetFormBtn = document.getElementById('reset-form-btn');
+            const saveCardBtn = document.getElementById('save-card-btn');
+            const shareCardBtn = document.getElementById('share-card-btn');
+            const printCardBtn = document.getElementById('print-card-btn');
+            const downloadCardBtn = document.getElementById('download-card-btn');
+            const generatedCard = document.getElementById('generated-card');
+            
+            // Форматирование номера карты
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = '';
+                
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formattedValue += ' ';
+                    }
+                    formattedValue += value[i];
+                }
+                
+                e.target.value = formattedValue;
+            });
+            
+            // Форматирование телефона
+            userPhoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                let formattedValue = '+7 ';
+                
+                if (value.length > 1) {
+                    value = value.substring(1);
+                }
+                
+                if (value.length > 0) {
+                    formattedValue += '(' + value.substring(0, 3);
+                }
+                if (value.length > 3) {
+                    formattedValue += ') ' + value.substring(3, 6);
+                }
+                if (value.length > 6) {
+                    formattedValue += '-' + value.substring(6, 8);
+                }
+                if (value.length > 8) {
+                    formattedValue += '-' + value.substring(8, 10);
+                }
+                
+                e.target.value = formattedValue;
+            });
+            
+            // Генерация карты
+            generateCardBtn.addEventListener('click', function() {
+                const name = userNameInput.value.trim();
+                const phone = userPhoneInput.value.trim();
+                const email = userEmailInput.value.trim();
+                const cardNum = cardNumberInput.value.trim();
+                const birthdate = userBirthdateInput.value;
+                
+                if (!name) {
+                    alert('Пожалуйста, введите ваше имя');
+                    return;
+                }
+                
+                if (!cardNum || cardNum.replace(/\s/g, '').length !== 12) {
+                    alert('Пожалуйста, введите корректный номер карты (12 цифр)');
+                    return;
+                }
+                
+                // Обновление данных на карте
+                cardUser.textContent = name;
+                cardNumber.textContent = cardNum;
+                pointsValue.textContent = '0';
+                
+                // Генерация штрих-кода
+                generateBarcode(cardNum);
+                
+                // Сохранение данных в localStorage
+                const userData = {
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    cardNumber: cardNum,
+                    birthdate: birthdate,
+                    points: 0,
+                    created: new Date().toISOString()
+                };
+                
+                localStorage.setItem('smileParfumeCard', JSON.stringify(userData));
+                
+                // Показать сообщение об успехе
+                generatedCard.classList.add('active');
+            });
+            
+            // Сброс формы
+            resetFormBtn.addEventListener('click', function() {
+                userNameInput.value = '';
+                userPhoneInput.value = '';
+                userEmailInput.value = '';
+                cardNumberInput.value = '';
+                userBirthdateInput.value = '';
+                
+                cardUser.textContent = 'Ваше Имя';
+                cardNumber.textContent = '0000 0000 0000';
+                pointsValue.textContent = '0';
+                
+                generatedCard.classList.remove('active');
+                generateBarcode('000000000000');
+            });
+            
+            // Сохранение карты
+            saveCardBtn.addEventListener('click', function() {
+                const cardData = localStorage.getItem('smileParfumeCard');
+                if (!cardData) {
+                    alert('Сначала создайте карту');
+                    return;
+                }
+                
+                alert('Карта успешно сохранена!');
+            });
+            
+            // Поделиться картой
+            shareCardBtn.addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Моя карта лояльности Smile Parfume',
+                        text: 'Посмотрите мою карту лояльности Smile Parfume',
+                        url: window.location.href
+                    })
+                    .catch(error => console.log('Ошибка при попытке поделиться:', error));
+                } else {
+                    alert('Функция "Поделиться" недоступна в вашем браузере');
+                }
+            });
+            
+            // Печать карты
+            printCardBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Скачать карту
+            downloadCardBtn.addEventListener('click', function() {
+                alert('Функция скачивания карты будет реализована в следующей версии');
+                // В реальном приложении здесь был бы код для создания и скачивания изображения карты
+            });
+            
+            // Загрузка сохраненных данных
+            function loadSavedData() {
+                const savedData = localStorage.getItem('smileParfumeCard');
+                if (savedData) {
+                    const userData = JSON.parse(savedData);
+                    
+                    userNameInput.value = userData.name || '';
+                    userPhoneInput.value = userData.phone || '';
+                    userEmailInput.value = userData.email || '';
+                    cardNumberInput.value = userData.cardNumber || '';
+                    userBirthdateInput.value = userData.birthdate || '';
+                    
+                    cardUser.textContent = userData.name || 'Ваше Имя';
+                    cardNumber.textContent = userData.cardNumber || '0000 0000 0000';
+                    pointsValue.textContent = userData.points || '0';
+                    
+                    generateBarcode(userData.cardNumber || '000000000000');
+                    generatedCard.classList.add('active');
+                }
+            }
+            
+            // Генерация штрих-кода
+            function generateBarcode(cardNumber) {
+                // Удаляем пробелы из номера карты для штрих-кода
+                const barcodeNumber = cardNumber.replace(/\s/g, '');
+                JsBarcode(barcodeSvg, barcodeNumber, {
+                    format: "CODE128",
+                    width: 2,
+                    height: 40,
+                    displayValue: false
+                });
+            }
+            
+            // Автогенерация номера карты если поле пустое
+            cardNumberInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    // Генерация случайного номера карты
+                    const part1 = Math.floor(1000 + Math.random() * 9000);
+                    const part2 = Math.floor(1000 + Math.random() * 9000);
+                    const part3 = Math.floor(1000 + Math.random() * 9000);
+                    this.value = `${part1} ${part2} ${part3}`;
+                }
+            });
+            
+            // Инициализация
+            loadSavedData();
+            generateBarcode('000000000000');
+        });
+    </script>
+</body>
+</html>
