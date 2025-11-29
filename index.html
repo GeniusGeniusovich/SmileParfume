@@ -165,7 +165,7 @@
             background: white;
             padding: 6px;
             border-radius: 6px;
-            height: 45px;
+            height: 60px;
         }
 
         .card-footer {
@@ -177,24 +177,8 @@
         }
 
         .card-user {
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 500;
-        }
-
-        .card-points {
-            text-align: right;
-        }
-
-        .points-value {
-            font-size: 2rem;
-            font-weight: bold;
-            line-height: 1;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .points-label {
-            font-size: 0.8rem;
-            opacity: 0.9;
         }
 
         .form-group {
@@ -211,7 +195,7 @@
             gap: 8px;
         }
 
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -222,7 +206,7 @@
             transition: var(--transition);
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus {
             border-color: var(--primary-color);
             outline: none;
             box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
@@ -270,40 +254,6 @@
             transform: translateY(-2px);
         }
 
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .card-action-btn {
-            flex: 1;
-            padding: 10px;
-            background: var(--card-color);
-            border: none;
-            border-radius: 8px;
-            box-shadow: var(--box-shadow);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .card-action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-action-btn i {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-
         .instructions {
             background: var(--card-color);
             border-radius: var(--border-radius);
@@ -342,26 +292,6 @@
         .generated-card.active {
             display: block;
         }
-
-        .download-btn {
-            margin-top: 15px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .download-btn:hover {
-            background: #d81b60;
-            transform: translateY(-2px);
-        }
     </style>
 </head>
 <body>
@@ -378,35 +308,12 @@
                 </div>
                 <div class="card-footer">
                     <div class="card-user" id="card-user">Ваше Имя</div>
-                    <div class="card-points">
-                        <div class="points-value" id="points-value">0</div>
-                        <div class="points-label" id="points-label">баллов</div>
-                    </div>
                 </div>
             </div>
             
-            <div class="card-actions">
-                <button class="card-action-btn" id="save-card-btn">
-                    <i class="fas fa-save"></i>
-                    <span>Сохранить</span>
-                </button>
-                <button class="card-action-btn" id="share-card-btn">
-                    <i class="fas fa-share-alt"></i>
-                    <span>Поделиться</span>
-                </button>
-                <button class="card-action-btn" id="print-card-btn">
-                    <i class="fas fa-print"></i>
-                    <span>Печать</span>
-                </button>
-            </div>
-            
             <div class="generated-card" id="generated-card">
-                <h3>Карта сохранена!</h3>
-                <p>Ваша карта лояльности успешно создана и сохранена.</p>
-                <button class="download-btn" id="download-card-btn">
-                    <i class="fas fa-download"></i>
-                    Скачать карту
-                </button>
+                <h3>Карта создана!</h3>
+                <p>Ваша карта лояльности успешно создана.</p>
             </div>
         </div>
         
@@ -421,23 +328,7 @@
                     <i class="fas fa-user"></i>
                     Ваше имя
                 </label>
-                <input type="text" id="user-name" placeholder="Введите ваше имя">
-            </div>
-            
-            <div class="form-group">
-                <label for="user-phone">
-                    <i class="fas fa-phone"></i>
-                    Номер телефона
-                </label>
-                <input type="tel" id="user-phone" placeholder="+7 (000) 000-00-00">
-            </div>
-            
-            <div class="form-group">
-                <label for="user-email">
-                    <i class="fas fa-envelope"></i>
-                    Email
-                </label>
-                <input type="email" id="user-email" placeholder="your@email.com">
+                <input type="text" id="user-name" placeholder="Введите ваше имя" maxlength="30">
             </div>
             
             <div class="form-group">
@@ -446,14 +337,6 @@
                     Номер карты
                 </label>
                 <input type="text" id="card-number-input" placeholder="0000 0000 0000" maxlength="14">
-            </div>
-            
-            <div class="form-group">
-                <label for="user-birthdate">
-                    <i class="fas fa-birthday-cake"></i>
-                    Дата рождения
-                </label>
-                <input type="date" id="user-birthdate">
             </div>
             
             <div class="action-buttons">
@@ -483,26 +366,20 @@
         document.addEventListener('DOMContentLoaded', function() {
             const cardNumber = document.getElementById('card-number');
             const cardUser = document.getElementById('card-user');
-            const pointsValue = document.getElementById('points-value');
             const barcodeSvg = document.getElementById('barcode');
             
             const userNameInput = document.getElementById('user-name');
-            const userPhoneInput = document.getElementById('user-phone');
-            const userEmailInput = document.getElementById('user-email');
             const cardNumberInput = document.getElementById('card-number-input');
-            const userBirthdateInput = document.getElementById('user-birthdate');
             
             const generateCardBtn = document.getElementById('generate-card-btn');
             const resetFormBtn = document.getElementById('reset-form-btn');
-            const saveCardBtn = document.getElementById('save-card-btn');
-            const shareCardBtn = document.getElementById('share-card-btn');
-            const printCardBtn = document.getElementById('print-card-btn');
-            const downloadCardBtn = document.getElementById('download-card-btn');
             const generatedCard = document.getElementById('generated-card');
             
             // Форматирование номера карты
             cardNumberInput.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                if (value.length > 12) value = value.substring(0, 12);
+                
                 let formattedValue = '';
                 
                 for (let i = 0; i < value.length; i++) {
@@ -515,38 +392,10 @@
                 e.target.value = formattedValue;
             });
             
-            // Форматирование телефона
-            userPhoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                let formattedValue = '+7 ';
-                
-                if (value.length > 1) {
-                    value = value.substring(1);
-                }
-                
-                if (value.length > 0) {
-                    formattedValue += '(' + value.substring(0, 3);
-                }
-                if (value.length > 3) {
-                    formattedValue += ') ' + value.substring(3, 6);
-                }
-                if (value.length > 6) {
-                    formattedValue += '-' + value.substring(6, 8);
-                }
-                if (value.length > 8) {
-                    formattedValue += '-' + value.substring(8, 10);
-                }
-                
-                e.target.value = formattedValue;
-            });
-            
             // Генерация карты
             generateCardBtn.addEventListener('click', function() {
                 const name = userNameInput.value.trim();
-                const phone = userPhoneInput.value.trim();
-                const email = userEmailInput.value.trim();
                 const cardNum = cardNumberInput.value.trim();
-                const birthdate = userBirthdateInput.value;
                 
                 if (!name) {
                     alert('Пожалуйста, введите ваше имя');
@@ -561,7 +410,6 @@
                 // Обновление данных на карте
                 cardUser.textContent = name;
                 cardNumber.textContent = cardNum;
-                pointsValue.textContent = '0';
                 
                 // Генерация штрих-кода
                 generateBarcode(cardNum);
@@ -569,11 +417,7 @@
                 // Сохранение данных в localStorage
                 const userData = {
                     name: name,
-                    phone: phone,
-                    email: email,
                     cardNumber: cardNum,
-                    birthdate: birthdate,
-                    points: 0,
                     created: new Date().toISOString()
                 };
                 
@@ -586,53 +430,13 @@
             // Сброс формы
             resetFormBtn.addEventListener('click', function() {
                 userNameInput.value = '';
-                userPhoneInput.value = '';
-                userEmailInput.value = '';
                 cardNumberInput.value = '';
-                userBirthdateInput.value = '';
                 
                 cardUser.textContent = 'Ваше Имя';
                 cardNumber.textContent = '0000 0000 0000';
-                pointsValue.textContent = '0';
                 
                 generatedCard.classList.remove('active');
                 generateBarcode('000000000000');
-            });
-            
-            // Сохранение карты
-            saveCardBtn.addEventListener('click', function() {
-                const cardData = localStorage.getItem('smileParfumeCard');
-                if (!cardData) {
-                    alert('Сначала создайте карту');
-                    return;
-                }
-                
-                alert('Карта успешно сохранена!');
-            });
-            
-            // Поделиться картой
-            shareCardBtn.addEventListener('click', function() {
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Моя карта лояльности Smile Parfume',
-                        text: 'Посмотрите мою карту лояльности Smile Parfume',
-                        url: window.location.href
-                    })
-                    .catch(error => console.log('Ошибка при попытке поделиться:', error));
-                } else {
-                    alert('Функция "Поделиться" недоступна в вашем браузере');
-                }
-            });
-            
-            // Печать карты
-            printCardBtn.addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Скачать карту
-            downloadCardBtn.addEventListener('click', function() {
-                alert('Функция скачивания карты будет реализована в следующей версии');
-                // В реальном приложении здесь был бы код для создания и скачивания изображения карты
             });
             
             // Загрузка сохраненных данных
@@ -642,14 +446,10 @@
                     const userData = JSON.parse(savedData);
                     
                     userNameInput.value = userData.name || '';
-                    userPhoneInput.value = userData.phone || '';
-                    userEmailInput.value = userData.email || '';
                     cardNumberInput.value = userData.cardNumber || '';
-                    userBirthdateInput.value = userData.birthdate || '';
                     
                     cardUser.textContent = userData.name || 'Ваше Имя';
                     cardNumber.textContent = userData.cardNumber || '0000 0000 0000';
-                    pointsValue.textContent = userData.points || '0';
                     
                     generateBarcode(userData.cardNumber || '000000000000');
                     generatedCard.classList.add('active');
@@ -663,7 +463,7 @@
                 JsBarcode(barcodeSvg, barcodeNumber, {
                     format: "CODE128",
                     width: 2,
-                    height: 40,
+                    height: 60,
                     displayValue: false
                 });
             }
